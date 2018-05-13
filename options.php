@@ -4,8 +4,9 @@
  * options.php -- SpamCop options page
  *
  * @copyright 1999-2018 The SquirrelMail Project Team
+ * @modified 2018 Andrew Sachen
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- * @version $Id: options.php 14750 2018-01-16 23:44:07Z pdontthink $
+ * @version $Id: options.php 1.1 2018-05-13 02:00:00Z realityripple $
  * @package plugins
  * @subpackage spamcop
  */
@@ -52,6 +53,12 @@ switch ($action) {
     case 'dontkeep':
         setPref($data_dir, $username, 'spamcop_save', 1);
         break;
+    case 'movetospam':
+        setPref($data_dir, $username, 'spamcop_movetospam', 1);
+        break;
+    case 'dontmovetospam':
+        setPref($data_dir, $username, 'spamcop_movetospam', 0);
+        break;
     case 'meth':
         if (isset($meth)) {
             setPref($data_dir, $username, 'spamcop_method', $meth);
@@ -67,7 +74,7 @@ switch ($action) {
         break;
 }
 
-global $spamcop_enabled, $spamcop_delete, $spamcop_save, $spamcop_quick_report;
+global $spamcop_enabled, $spamcop_delete, $spamcop_save, $spamcop_movetospam, $spamcop_quick_report;
 spamcop_load_function();
 
 ?>
@@ -93,6 +100,14 @@ spamcop_load_function();
             '<small>(' . _("Only works with email-based reporting") . ')</small>',
             'right','','valign="top"');
             echo html_tag('td', spamcop_enable_disable($spamcop_delete,'save','delete'),'','','valign="top"');
+          ?>
+        </tr>
+        <tr>
+          <?php
+            echo html_tag('td',_("Move spam to Spam folder when reported:") . "<br />\n" .
+            '<small>(' . _("Only works with email-based reporting") . ')</small>',
+            'right','','valign="top"');
+            echo html_tag('td', spamcop_enable_disable($spamcop_movetospam,'dontmovetospam','movetospam'),'','','valign="top"');
           ?>
         </tr>
         <tr>

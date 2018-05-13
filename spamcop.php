@@ -4,8 +4,9 @@
  * spamcop.php -- SpamCop plugin -- main page
  *
  * @copyright 1999-2018 The SquirrelMail Project Team
+ * @modified 2018 Andrew Sachen
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- * @version $Id: spamcop.php 14750 2018-01-16 23:44:07Z pdontthink $
+ * @version $Id: spamcop.php 1.1 2018-05-13 02:00:00Z realityripple $
  * @package plugins
  * @subpackage spamcop
  */
