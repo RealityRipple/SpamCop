@@ -6,7 +6,7 @@
  * @copyright 1999-2018 The SquirrelMail Project Team
  * @modified 2018 Andrew Sachen
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- * @version $Id: spamcop.php 1.1 2018-05-13 02:00:00Z realityripple $
+ * @version $Id: spamcop.php 1.2 2018-10-05 12:00:00Z realityripple $
  * @package plugins
  * @subpackage spamcop
  */
@@ -154,7 +154,7 @@ echo "</p>";
       $Warning = "\n[truncated by SpamCop]\n";
       $spam_message = substr($spam_message, 0, 50000 - strlen($Warning)) . $Warning;
    }
-   $action_url="http://members.spamcop.net/sc";
+   $action_url="//members.spamcop.net/sc";
 
    if (isset($js_web) && $js_web) {
      echo "<form method=\"post\" action=\"$action_url\" name=\"submitspam\"".
