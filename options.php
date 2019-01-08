@@ -4,7 +4,7 @@
  * options.php -- SpamCop options page
  *
  * @copyright 1999-2018 The SquirrelMail Project Team
- * @modified 2018 Andrew Sachen
+ * @modified 2018-2019 Andrew Sachen
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  * @version $Id: options.php 1.1 2018-05-13 02:00:00Z realityripple $
  * @package plugins

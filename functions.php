@@ -4,7 +4,7 @@
  * SpamCop plugin - functions
  *
  * @copyright 1999-2018 The SquirrelMail Project Team
- * @modified 2018 Andrew Sachen
+ * @modified 2018-2019 Andrew Sachen
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  * @version $Id: functions.php 1.2 2018-10-05 12:00:00Z realityripple $
  * @package plugins
