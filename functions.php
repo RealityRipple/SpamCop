@@ -19,7 +19,7 @@
  * @since 1.4.3 and 1.5.0
  */
 global $spamcop_quick_report;
-$spamcop_quick_report = false;
+$spamcop_quick_report = true;
 
 /**
  * Loads spamcop settings and validates some of values (make '' into 'default', etc.)
