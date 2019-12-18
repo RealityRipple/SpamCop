@@ -6,7 +6,7 @@
  * @copyright 1999-2018 The SquirrelMail Project Team
  * @modified 2018-2019 Andrew Sachen
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- * @version $Id: spamcop.php 1.2 2018-10-05 12:00:00Z realityripple $
+ * @version $Id: spamcop.php 1.3 2019-12-18 00:30:00Z realityripple $
  * @package plugins
  * @subpackage spamcop
  */
@@ -40,6 +40,11 @@ if (! sqgetGlobalVar('passed_ent_id', $passed_ent_id, SQ_GET) ) {
 }
 if (! sqgetGlobalVar('js_web', $js_web, SQ_GET) ) {
     $js_web = 0;
+}
+if ( $passed_id == 0 ) {
+    if (! sqgetGlobalVar('passed_ids', $passed_ids, SQ_GET) ) {
+        $passed_ids = '0';
+    }
 }
 
 sqgetGlobalVar('compose_messages', $compose_messages, SQ_SESSION);
@@ -91,26 +96,59 @@ if (! is_plugin_enabled('spamcop')) {
           $composeMessage=$compose_messages[$session];
        }
 
+       if ($passed_id == 0 && strpos($passed_ids, '.') !== false)
+       {
+          $aUids = explode('.', $passed_ids);
+          for($i = 0; $i < count($aUids); $i++)
+          {
+             $uid = $aUids[$i];
+             $message = sqimap_get_message($imap_stream, $uid, $mailbox);
+             $composeMessage = spamcop_getMessage_RFC822_Attachment($message, $composeMessage, $uid,
+                                           $passed_ent_id, $imap_stream);
+          }
+       }
+       else
+       {
+          $message = sqimap_get_message($imap_stream, $passed_id, $mailbox);
+          $composeMessage = spamcop_getMessage_RFC822_Attachment($message, $composeMessage, $passed_id,
+                                        $passed_ent_id, $imap_stream);
+       }
 
-        $message = sqimap_get_message($imap_stream, $passed_id, $mailbox);
-        $composeMessage = spamcop_getMessage_RFC822_Attachment($message, $composeMessage, $passed_id,
-                                      $passed_ent_id, $imap_stream);
-
-            $compose_messages[$session] = $composeMessage;
+        $compose_messages[$session] = $composeMessage;
         sqsession_register($compose_messages, 'compose_messages');
+    }
 
-        $fn = getPref($data_dir, $username, 'full_name');
-        $em = getPref($data_dir, $username, 'email_address');
-
-        $HowItLooks = $fn . ' ';
-        if ($em != '')
-          $HowItLooks .= '<' . $em . '>';
-     }
-
-
-echo "<p>";
-echo _("Sending this spam report will give you back a reply with URLs that you can click on to properly report this spam message to the proper authorities. This is a free service. By pressing the \"Send Spam Report\" button, you agree to follow SpamCop's rules/terms of service/etc.");
-echo "</p>";
+if ($passed_id == 0 && strpos($passed_ids, '.') !== false)
+{
+    $idCount = count(explode('.', $passed_ids));
+    if ($spamcop_method == 'quick_email')
+    {
+        echo "<p>";
+        echo _("Sending this spam report will automatically report these ").$idCount._(" spam messages to the proper authorities. This is a free service. By pressing the \"Send Spam Report\" button, you agree to follow SpamCop's rules/terms of service/etc.");
+        echo "</p>";
+    }
+    else
+    {
+        echo "<p>";
+        echo _("Sending this spam report will give you back a reply with URLs that you can click on to properly report these ").$idCount._(" spam messages to the proper authorities. This is a free service. By pressing the \"Send Spam Report\" button, you agree to follow SpamCop's rules/terms of service/etc.");
+        echo "</p>";
+    }
+}
+else
+{
+    if ($spamcop_method == 'quick_email')
+    {
+        echo "<p>";
+        echo _("Sending this spam report will automatically report this spam message to the proper authorities. This is a free service. By pressing the \"Send Spam Report\" button, you agree to follow SpamCop's rules/terms of service/etc.");
+        echo "</p>";
+    }
+    else
+    {
+        echo "<p>";
+        echo _("Sending this spam report will give you back a reply with URLs that you can click on to properly report this spam message to the proper authorities. This is a free service. By pressing the \"Send Spam Report\" button, you agree to follow SpamCop's rules/terms of service/etc.");
+        echo "</p>";
+    }
+}
 
 ?>
 
@@ -140,7 +178,7 @@ echo "</p>";
 ?>  <form method="post" action="<?php echo $form_action?>">
   <input type="hidden" name="smtoken" value="<?php echo sm_generate_security_token() ?>" />
   <input type="hidden" name="mailbox" value="<?php echo sm_encode_html_special_chars($mailbox) ?>" />
-  <input type="hidden" name="spamcop_is_composing" value="<?php echo sm_encode_html_special_chars($passed_id) ?>" />
+  <input type="hidden" name="spamcop_is_composing" value="<?php if($passed_id == 0) echo sm_encode_html_special_chars($passed_ids); else echo sm_encode_html_special_chars($passed_id) ?>" />
   <input type="hidden" name="send_to" value="<?php echo sm_encode_html_special_chars($report_email)?>" />
   <input type="hidden" name="subject" value="reply anyway" />
   <input type="hidden" name="identity" value="0" />

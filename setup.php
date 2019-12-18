@@ -6,7 +6,7 @@
  * @copyright 1999-2018 The SquirrelMail Project Team
  * @modified 2018-2019 Andrew Sachen
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- * @version $Id: setup.php 1.1 2018-05-13 02:00:00Z realityripple $
+ * @version $Id: setup.php 1.3 2019-12-18 00:30:00Z realityripple $
  * @package plugins
  * @subpackage spamcop
  */
@@ -22,6 +22,10 @@ function squirrelmail_plugin_init_spamcop() {
         'spamcop_options';
     $squirrelmail_plugin_hooks['loading_prefs']['spamcop'] =
         'spamcop_load';
+    $squirrelmail_plugin_hooks['message_list_controls']['spamcop'] =
+        'spamcop_show_button';
+    $squirrelmail_plugin_hooks['mailbox_display_button_action']['spamcop'] =
+        'spamcop_action_button';
     $squirrelmail_plugin_hooks['read_body_header_right']['spamcop'] =
         'spamcop_show_link';
     $squirrelmail_plugin_hooks['compose_send']['spamcop'] =
@@ -37,6 +41,23 @@ function spamcop_load() {
     spamcop_load_function();
 }
 
+/**
+ * Shows spamcop button on the folder screen
+ * @access private
+ */
+function spamcop_show_button(&$buttons) {
+    include_once(SM_PATH . 'plugins/spamcop/functions.php');
+    spamcop_show_button_function($buttons);
+}
+
+/**
+ * Performs spamcop button action on the folder screen
+ * @access private
+ */
+function spamcop_action_button(&$actionData) {
+    include_once(SM_PATH . 'plugins/spamcop/functions.php');
+    spamcop_action_button_function($actionData);
+}
 
 /**
  * Shows spamcop link on the read-a-message screen

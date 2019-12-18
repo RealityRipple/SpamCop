@@ -39,6 +39,8 @@ API
 SquirrelMail hooks used by plugin:
 * loading_prefs
 * optpage_register_block
+* message_list_controls
+* mailbox_display_button_action
 * read_body_header_right
 * compose_send
 
