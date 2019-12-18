@@ -6,7 +6,7 @@
  * @copyright 1999-2018 The SquirrelMail Project Team
  * @modified 2018-2019 Andrew Sachen
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- * @version $Id: functions.php 1.2 2018-10-05 12:00:00Z realityripple $
+ * @version $Id: functions.php 1.3 2019-12-18 00:30:00Z realityripple $
  * @package plugins
  * @subpackage spamcop
  */
@@ -54,6 +54,64 @@ function spamcop_load_function() {
     }
     if ($spamcop_id == '')
         $spamcop_enabled = 0;
+}
+
+/**
+ * Add spamcop button to message_list_controls (internal function)
+ * @since 1.5.1
+ * @access private
+ */
+function spamcop_show_button_function(&$buttons) {
+    global $spamcop_enabled, $spamcop_method, $spamcop_quick_report;
+
+    if (! $spamcop_enabled)
+        return;
+    if ($spamcop_method != 'thorough_email' && $spamcop_method != 'quick_email')
+        return;
+    if (! $spamcop_quick_report && $spamcop_method=='quick_email')
+        return;
+    $buttons['spamcop'] = array('value' => _("Report as Spam"), 'type' => 'submit', 'accesskey' => 'NONE'); //, 'extra_attrs' => array('onclick' => 'event.preventDefault(); return false;'));
+}
+
+/**
+ * Do spamcop button action in mailbox_display_button_action (internal function)
+ * @since 1.5.1
+ * @access private
+ */
+function spamcop_action_button_function(&$actionData) {
+    global $spamcop_enabled, $spamcop_method, $spamcop_quick_report;
+
+    if (! $spamcop_enabled)
+        return;
+    /*
+       Catch situation when user uses quick_email and does not update
+       preferences. User gets web_form link. If prefs are set to
+       quick_email format - they will be updated after clicking the link
+     */
+    if (! $spamcop_quick_report && $spamcop_method=='quick_email')
+        return;
+
+    $mailbox = $actionData[3];
+    $checkedIDs = $actionData[4];
+    if($checkedIDs === null)
+        return;
+    $passed_ent_id = '0';
+    $startMessage = '1';
+    if(count($checkedIDs) === 1)
+    {
+        $url =  '../plugins/spamcop/spamcop.php?passed_id=' . $checkedIDs[0] .
+                     '&mailbox=' . $mailbox . '&startMessage=' . $startMessage .
+                     '&passed_ent_id=' . $passed_ent_id;
+    }
+    else
+    {
+        $passed_ids = implode('.', $checkedIDs);
+        $url =  '../plugins/spamcop/spamcop.php?passed_id=0&passed_ids=' . $passed_ids .
+                    '&mailbox=' . $mailbox . '&startMessage=' . $startMessage .
+                    '&passed_ent_id=' . $passed_ent_id;
+    }
+    header('Location: '.$url);
+    die('Redirecting to '.$url);
 }
 
 /**
@@ -137,7 +195,10 @@ function spamcop_while_sending_function() {
         if ($spamcop_delete) {
             $imapConnection = sqimap_login($username, false, $imapServerAddress, $imapPort, 0, $imap_stream_options);
             sqimap_mailbox_select($imapConnection, $mailbox);
-            sqimap_msgs_list_delete($imapConnection, $mailbox, array($spamcop_is_composing));
+            if(strpos($spamcop_is_composing, '.') === false)
+                sqimap_msgs_list_delete($imapConnection, $mailbox, array($spamcop_is_composing));
+            else
+                sqimap_msgs_list_delete($imapConnection, $mailbox, explode('.', $spamcop_is_composing));
             if ($auto_expunge)
                 sqimap_mailbox_expunge($imapConnection, $mailbox, true);
         }
@@ -159,7 +220,10 @@ function spamcop_while_sending_function() {
               break;
              }
             }
-            sqimap_msgs_list_move($imapConnection, $spamcop_is_composing, $spamBox, 0, $mailbox);
+            if(strpos($spamcop_is_composing, '.') === false)
+                sqimap_msgs_list_move($imapConnection, $spamcop_is_composing, $spamBox, 0, $mailbox);
+            else
+                sqimap_msgs_list_move($imapConnection, explode('.', $spamcop_is_composing), $spamBox, 0, $mailbox);
             if ($auto_expunge)
                 sqimap_mailbox_expunge($imapConnection, $mailbox, true);
         }
