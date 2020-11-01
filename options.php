@@ -3,10 +3,10 @@
 /**
  * options.php -- SpamCop options page
  *
- * @copyright 1999-2018 The SquirrelMail Project Team
- * @modified 2018-2019 Andrew Sachen
+ * @copyright 1999-2020 The SquirrelMail Project Team
+ * @modified 2018-2020 Andrew Sachen
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- * @version $Id: options.php 1.3 2019-12-18 00:30:00Z realityripple $
+ * @version $Id: options.php 1.4 2020-11-01 23:50:00Z realityripple $
  * @package plugins
  * @subpackage spamcop
  */
