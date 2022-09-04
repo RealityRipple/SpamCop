@@ -148,9 +148,9 @@ function spamcop_show_link_function(&$links) {
         $spamcop_method = 'web_form';
     }
 
-    $url =  '../plugins/spamcop/spamcop.php?passed_id=' . urlencode($passed_id) .
-                '&amp;mailbox=' . urlencode($mailbox) . '&amp;startMessage=' . urlencode($startMessage) .
-                '&amp;passed_ent_id=' . urlencode($passed_ent_id);
+    $url =  '../plugins/spamcop/spamcop.php?passed_id=' . urlencode(strval($passed_id)) .
+                '&amp;mailbox=' . urlencode(strval($mailbox)) . '&amp;startMessage=' . urlencode(strval($startMessage)) .
+                '&amp;passed_ent_id=' . urlencode(strval($passed_ent_id));
     $link = array();
     if ( $spamcop_method == 'web_form' && checkForJavascript() ) {
         $url .= '&amp;js_web=1';
